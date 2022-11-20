@@ -140,7 +140,7 @@ class HeadersBag implements ArrayAccess
         $httpHeaders->set('Request-Line', reset($list) ?? '');
         for ($i = 1; $i < count($list); $i++) {
             if (strpos($list[$i], ':') !== false) {
-                [$key, $value] = array_map(function ($item) {
+                list($key, $value) = array_map(function ($item) {
                     return $item ? trim($item) : null;
                 }, explode(':', $list[$i], 2));
                 $httpHeaders->set($key, $value);

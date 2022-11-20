@@ -6,7 +6,7 @@ namespace Drewlabs\Psr7;
 
 final class MimeType
 {
-    private const MIME_TYPES = [
+    const MIME_TYPES = [
         '1km' => 'application/vnd.1000minds.decision-model+xml',
         '3dml' => 'text/vnd.in3d.3dml',
         '3ds' => 'image/x-3ds',

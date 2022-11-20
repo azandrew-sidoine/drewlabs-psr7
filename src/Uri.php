@@ -22,19 +22,19 @@ final class Uri implements UriInterface
     /**
      * HTTP schemes
      */
-    private const SCHEMES = ['http' => 80, 'https' => 443];
+    const SCHEMES = ['http' => 80, 'https' => 443];
 
     /**
      * Not reserved characters
      * 
      * @var string
      */
-    private const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
+    const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
 
     /**
      * @var string
      */
-    private const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+    const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
 
     /** @var string Uri scheme. */
     private $scheme = '';

@@ -7,7 +7,7 @@ class ResponseReasonPhrase
     /**
      * @var array<int,string>
      */
-    public const PHRASES = [
+    const PHRASES = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
