@@ -1,0 +1,32 @@
+{
+    "name": "drewlabs/psr7",
+    "description": "Psr7 implementations library",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Drewlabs\\Psr7\\": "src/"
+        }
+    },
+    "authors": [{
+        "name": "azandrew-sidoine",
+        "email": "asmyns.platonnas29@gmail.com"
+    }],
+    "keywords": [
+        "psr7",
+        "http",
+        "request",
+        "headers"
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=7.0",
+        "psr/http-message": "^1.0",
+        "drewlabs/psr7-stream": "^1.2"
+    },
+    "require-dev": {
+        "donatj/mock-webserver": "^2.5",
+        "phpunit/phpunit": ">=6.0"
+    }
+}
