@@ -112,7 +112,7 @@ trait Message
             Stream::new($this->body);
     }
 
-    public function withBody($body)
+    public function withBody(StreamInterface $body)
     {
         if (is_string($body)) {
             $body = Stream::new($body);
