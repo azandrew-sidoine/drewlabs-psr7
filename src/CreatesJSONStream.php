@@ -33,7 +33,7 @@ class CreatesJSONStream implements CreatesStream
      * @param int $flags 
      * @return void 
      */
-    public function __construct($value, ?int $depth = null, int $flags = 0)
+    public function __construct($value, int $depth = null, int $flags = 0)
     {
         $this->value = $value ?? [];
         $this->depth = $depth ?? 512;
