@@ -8,7 +8,7 @@ use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
 /**
- * PSR-7 URI implementation.
+ * PSR-7 URI implementation from https://github.com/Nyholm/psr7/blob/master/src/Uri.php
  *
  * @author Michael Dowling
  * @author Tobias Schultze
@@ -19,6 +19,8 @@ use Psr\Http\Message\UriInterface;
  */
 final class Uri implements UriInterface
 {
+    use CreatesPsr7Uri;
+
     /**
      * HTTP schemes
      */
@@ -81,30 +83,6 @@ final class Uri implements UriInterface
                 $this->userInfo .= ':' . $parts['pass'];
             }
         }
-    }
-
-    /**
-     * Static method for creating Uri instance
-     * 
-     * @param UriInterface|string|null $uri 
-     * @return static 
-     * @throws InvalidArgumentException 
-     */
-    public static function new($uri = null)
-    {
-        if (null === $uri) {
-            return new static;
-        }
-        if ($uri instanceof UriInterface) {
-            return (new static)->withScheme($uri->getScheme())
-                ->withHost($uri->getHost())
-                ->withPort($uri->getPort())
-                ->withPath($uri->getPath())
-                ->withQuery($uri->getQuery())
-                ->withFragment($uri->getFragment())
-                ->withUserInfo($uri->getUserInfo());
-        }
-        return new static((string)$uri);
     }
 
     #[\ReturnTypeWillChange]

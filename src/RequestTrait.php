@@ -7,6 +7,36 @@ use Psr\Http\Message\UriInterface;
 
 trait RequestTrait
 {
+    /** @var string */
+    private $method;
+
+    /** @var string|null */
+    private $requestTarget;
+
+    /** @var UriInterface */
+    protected $uri;
+
+
+    private function initDefaultAttributes(
+        string $method = 'GET',
+        $uri = null,
+        array $headers = [],
+        $body = null,
+        string $version = '1.1'
+    ) {
+        $this->assertMethod($method);
+        $this->method = strtoupper($method);
+        $this->uri = Uri::new($uri);
+        $this->headers = HeadersBag::new($headers);
+        $this->protocol = $version;
+        if (!$this->headers->has('host')) {
+            $this->updateHostFromUri();
+        }
+        if ($body !== '' && $body !== null) {
+            $this->stream = Streams::lazy($body);
+        }
+    }
+
     #[\ReturnTypeWillChange]
     public function getRequestTarget()
     {

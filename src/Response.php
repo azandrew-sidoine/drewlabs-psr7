@@ -29,7 +29,7 @@ class Response implements ResponseInterface
     ) {
         $this->assertStatusCodeRange($status);
         $this->statusCode = $status;
-        $this->body = $body instanceof StreamInterface ? $body : Stream::new((string)($body ?? ''));
+        $this->stream = $body instanceof StreamInterface ? $body : Stream::new((string)($body ?? ''));
         $this->headers = HeadersBag::new($headers);
         $this->reasonPhrase = $reason == '' && ('' != ($reasonPhrase = ResponseReasonPhrase::getPrase($this->statusCode))) ? $reasonPhrase : (string) $reason;
         $this->protocol = $version;

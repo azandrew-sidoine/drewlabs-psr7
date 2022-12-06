@@ -26,7 +26,7 @@ trait Message
      * 
      * @var StreamInterface|string
      */
-    private $body;
+    private $stream;
 
     #[\ReturnTypeWillChange]
     public function getProtocolVersion()
@@ -107,9 +107,9 @@ trait Message
 
     public function getBody()
     {
-        return $this->body instanceof StreamInterface ?
-            $this->body :
-            Stream::new($this->body);
+        return $this->stream instanceof StreamInterface ?
+            $this->stream :
+            Stream::new($this->stream);
     }
 
     public function withBody(StreamInterface $body)
@@ -117,11 +117,11 @@ trait Message
         if (is_string($body)) {
             $body = Stream::new($body);
         }
-        if ($body === $this->body) {
+        if ($body === $this->stream) {
             return $this;
         }
         $object = clone $this;
-        $object->body = $body;
+        $object->stream = $body;
         return $object;
     }
 

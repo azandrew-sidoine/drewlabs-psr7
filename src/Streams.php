@@ -18,7 +18,7 @@ class Streams
      */
     public static function create($resource)
     {
-        return Stream::new();
+        return Stream::new($resource);
     }
 
     /**

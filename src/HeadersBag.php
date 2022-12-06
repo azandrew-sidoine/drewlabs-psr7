@@ -3,9 +3,12 @@
 namespace Drewlabs\Psr7;
 
 use ArrayAccess;
+use ArrayIterator;
 use InvalidArgumentException;
+use IteratorAggregate;
+use Traversable;
 
-class HeadersBag implements ArrayAccess
+class HeadersBag implements ArrayAccess, IteratorAggregate
 {
     /**
      * 
@@ -24,6 +27,12 @@ class HeadersBag implements ArrayAccess
             $this->set($key, $value);
         }
     }
+
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->headers ?? []);
+    }
+
     /**
      * 
      * @param string|array|self $headers 
@@ -46,6 +55,39 @@ class HeadersBag implements ArrayAccess
             return $object;
         }
         return static::parseHeaders($headers);
+    }
+
+
+
+    /**
+     * Creates a headeerr bag from $_SERVER array
+     * 
+     * @param array $globals 
+     * @return array 
+     */
+    public static function fromServerGlobals(array $globals)
+    {
+        $headers = [];
+        foreach ($globals as $key => $value) {
+            if (0 === \strpos($key, 'REDIRECT_')) {
+                $key = \substr($key, 9);
+                if (\array_key_exists($key, $globals)) {
+                    continue;
+                }
+            }
+            if ($value && (0 === \strpos($key, 'HTTP_'))) {
+                $name = \strtr(\strtolower(\substr($key, 5)), '_', '-');
+                $headers[$name] = $value;
+                continue;
+            }
+            if ($value && (0 === \strpos($key, 'CONTENT_'))) {
+                $name = 'content-' . \strtolower(\substr($key, 8));
+                $headers[$name] = $value;
+
+                continue;
+            }
+        }
+        return new static($headers);
     }
 
     /**
