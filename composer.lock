@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "drewlabs/psr7-stream",
-            "version": "v1.2.3",
+            "version": "v1.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream.git",
-                "reference": "f2d53bf6f5d48b7502d6a861978dc8a70c49cc8d"
+                "reference": "b10f82fd8ff6ff9594e24dc138a34597067264dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-psr7-stream/zipball/f2d53bf6f5d48b7502d6a861978dc8a70c49cc8d",
-                "reference": "f2d53bf6f5d48b7502d6a861978dc8a70c49cc8d",
+                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-psr7-stream/zipball/b10f82fd8ff6ff9594e24dc138a34597067264dd",
+                "reference": "b10f82fd8ff6ff9594e24dc138a34597067264dd",
                 "shasum": ""
             },
             "require": {
@@ -50,9 +50,9 @@
             "description": "Provides utility classes and implementations for the PSR7 stream interface",
             "support": {
                 "issues": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/issues",
-                "source": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/tree/v1.2.3"
+                "source": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/tree/v1.2.4"
             },
-            "time": "2022-11-20T18:56:36+00:00"
+            "time": "2022-12-07T16:05:30+00:00"
         },
         {
             "name": "psr/http-factory",

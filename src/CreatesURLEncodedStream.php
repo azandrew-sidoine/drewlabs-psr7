@@ -4,11 +4,12 @@ namespace Drewlabs\Psr7;
 
 use Drewlabs\Psr7Stream\CreatesStream;
 use Drewlabs\Psr7Stream\Stream;
+use Psr\Http\Message\StreamInterface;
+use InvalidArgumentException;
 
 class CreatesURLEncodedStream implements CreatesStream
 {
     /**
-     * 
      * @var array<array<string,mixed>>|object
      */
     private $attributes;
@@ -23,6 +24,12 @@ class CreatesURLEncodedStream implements CreatesStream
         $this->attributes = $attributes ? (array)$attributes : [];
     }
 
+    /**
+     * Creates an append stream
+     * 
+     * @return StreamInterface 
+     * @throws InvalidArgumentException 
+     */
     public function createStream()
     {
         return Stream::new($this->getEncodedData());
@@ -67,8 +74,8 @@ class CreatesURLEncodedStream implements CreatesStream
      * Converts input data to 1 dimensional list of values
      * 
      * @param mixed $data 
-     * @param bool $prefix 
-     * @return array 
+     * @param bool $prefix
+     * @return array
      */
     private static function flatten($data, $prefix = false)
     {

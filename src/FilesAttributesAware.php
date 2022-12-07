@@ -38,12 +38,12 @@ trait FilesAttributesAware
         return $this->error;
     }
 
-    public function getClientFilename(): ?string
+    public function getClientFilename()
     {
         return $this->name;
     }
 
-    public function getClientMediaType(): ?string
+    public function getClientMediaType()
     {
         return $this->mediaType;
     }

@@ -97,7 +97,7 @@ class CreatesServerRequest
         $headers = [],
         array $cookie = [],
         array $get = [],
-        ?array $post = null,
+        array $post = null,
         array $files = [],
         $body = null
     ) {
