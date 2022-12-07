@@ -14,13 +14,13 @@ class ServerRequest implements ServerRequestInterface
      * 
      * @var array<string,mixed>
      */
-    private $attributes;
+    private $attributes = [];
 
     /**
      * 
      * @var array<string,mixed>
      */
-    private $serverParams;
+    private $serverParams = [];
 
     /**
      * 
@@ -32,19 +32,19 @@ class ServerRequest implements ServerRequestInterface
      * 
      * @var UploadedFileInterface[]
      */
-    private $files;
+    private $files = [];
 
     /**
      * 
      * @var array<string,mixed>
      */
-    private $queryParams;
+    private $queryParams = [];
 
     /**
      * 
      * @var array<string,mixed>
      */
-    private $cookieParams;
+    private $cookieParams = [];
 
     /**
      * Creates a ServerRequest instance
@@ -133,7 +133,10 @@ class ServerRequest implements ServerRequestInterface
 
     public function getAttribute($name, $default = null)
     {
-        return $this->attributes[$name] ?? $default ?? null;
+        if (!array_key_exists($name, $this->attributes ?? [])) {
+            return $default;
+        }
+        return $this->attributes[$name];
     }
 
     public function withAttribute($name, $value)
@@ -145,7 +148,7 @@ class ServerRequest implements ServerRequestInterface
 
     public function withoutAttribute($name)
     {
-        if (!isset($this->attributes[$name])) {
+        if (!array_key_exists($name, $this->attributes ?? [])) {
             return $this;
         }
         $object = clone $this;

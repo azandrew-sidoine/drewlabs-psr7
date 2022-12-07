@@ -63,7 +63,7 @@ class HeadersBag implements ArrayAccess, IteratorAggregate
      * Creates a headeerr bag from $_SERVER array
      * 
      * @param array $globals 
-     * @return array 
+     * @return self 
      */
     public static function fromServerGlobals(array $globals)
     {

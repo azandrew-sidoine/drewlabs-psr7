@@ -3,7 +3,6 @@
 namespace Drewlabs\Psr7;
 
 use Drewlabs\Psr7Stream\Exceptions\StreamException;
-use Drewlabs\Psr7Stream\Stream;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
@@ -56,7 +55,7 @@ final class UploadedFile implements UploadedFileInterface
      * @return void 
      * @throws InvalidArgumentException
      */
-    public function __construct($resource, int $size, int $error = \UPLOAD_ERR_OK, string $name = null, string $mediaType = null)
+    public function __construct($resource, int $size, int $error = \UPLOAD_ERR_OK, $name = null, $mediaType = null)
     {
         if (false === \is_int($error) || !isset(self::UPLOAD_ERRORS[$error])) {
             throw new InvalidArgumentException('file error status must be an integer and one of PHP "UPLOAD_ERR_*" constants.');
@@ -73,8 +72,8 @@ final class UploadedFile implements UploadedFileInterface
         if (null !== $mediaType && !\is_string($mediaType)) {
             throw new InvalidArgumentException('file client media type must be a string or null');
         }
-
-        $this->error = $error;
+    
+        $this->error = is_numeric($error) ? intval($error) : $error;
         $this->size = $size;
         $this->name = $name;
         $this->mediaType = $mediaType;
@@ -96,7 +95,7 @@ final class UploadedFile implements UploadedFileInterface
     private function openLazyStream(string $path, $mode = 'r')
     {
         return Streams::lazy(function () use ($path, $mode) {
-            if (false === $resource = @\fopen($path, $mode)) {
+            if (false === ($resource = @\fopen($path, $mode))) {
                 throw new RuntimeException(\sprintf('destination file "%s" cannot be opened: %s', $path, \error_get_last()['message'] ?? ''));
             }
             return Streams::create($resource);
@@ -137,8 +136,6 @@ final class UploadedFile implements UploadedFileInterface
                 break;
             }
         }
-        // Release any stream resource
-        $stream->close();
         // If the uploaded file was created from a path, we unlink the file
         if (null !== $this->path) {
             @\unlink($this->path);
@@ -155,18 +152,20 @@ final class UploadedFile implements UploadedFileInterface
      */
     private function createStream($resource)
     {
+        if ($resource instanceof StreamInterface) {
+            return $resource;
+        }
         if (\is_string($resource) && '' !== $resource && is_file($resource)) {
             $this->path = $resource;
             return $this->openLazyStream($this->path);
         }
-        if (\is_resource($resource)) {
-            return Stream::new($resource);
-        }
 
-        if ($resource instanceof StreamInterface) {
-            return $resource;
+        if (\is_string($resource) || is_resource($resource)) {
+            return Streams::lazy(function () use ($resource) {
+                return Streams::create($resource);
+            });
         }
-        throw new \InvalidArgumentException('Invalid resource provided for UploadedFile');
+        throw new \InvalidArgumentException('Invalid resource provided for file');
     }
 
     /**
@@ -178,7 +177,7 @@ final class UploadedFile implements UploadedFileInterface
     public function getStream(): StreamInterface
     {
         $this->assertMoved();
-        if (null !== $this->stream) {
+        if (null === $this->stream) {
             throw new \RuntimeException('Cannot retrieve stream, due to upload error');
         }
         return $this->stream;

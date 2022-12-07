@@ -43,8 +43,8 @@ class CreatesServerRequest
      */
     public function __construct(
         ServerRequestFactoryInterface $serverRequestFactory = null,
-        StreamFactoryInterface $streamFactory = null,
-        UploadedFileFactoryInterface $uploadedFileFactory = null
+        UploadedFileFactoryInterface $uploadedFileFactory = null,
+        StreamFactoryInterface $streamFactory = null
     ) {
         $this->serverRequestFactory = $serverRequestFactory ?? new ServerRequestFactory;
         $this->streamFactory = $streamFactory ?? new StreamFactory;
@@ -83,7 +83,7 @@ class CreatesServerRequest
      * Creates a serverr request from array of attributes
      * 
      * @param array $server 
-     * @param array $headers 
+     * @param array|\Traversable $headers 
      * @param array $cookie 
      * @param array $get 
      * @param null|array $post 
@@ -94,7 +94,7 @@ class CreatesServerRequest
      */
     public function fromArrays(
         array $server,
-        array $headers = [],
+        $headers = [],
         array $cookie = [],
         array $get = [],
         ?array $post = null,
@@ -132,7 +132,7 @@ class CreatesServerRequest
     /**
      * 
      * @param array $server 
-     * @param mixed $headers 
+     * @param array|\Traversable $headers 
      * @return array|null 
      */
     private function createPostVariables(array $server, $headers)
@@ -143,6 +143,7 @@ class CreatesServerRequest
         $post = null;
         if ('POST' === $server['REQUEST_METHOD']) {
             foreach ($headers as $name => $header) {
+                $header = is_array($header) ? implode(',', $header) : $header;
                 if (true === \is_int($name) || 'content-type' !== \strtolower($name)) {
                     continue;
                 }
@@ -177,7 +178,7 @@ class CreatesServerRequest
             } elseif (\is_array($value)) {
                 $normalized[$key] = $this->normalizeFiles($value);
             } else {
-                throw new \InvalidArgumentException('not a value in files specification');
+                throw new \InvalidArgumentException('not a supported value in files specification');
             }
         }
         return $normalized;
@@ -195,8 +196,7 @@ class CreatesServerRequest
         if (\is_array($value['tmp_name'])) {
             return $this->normalizeNestedFileSpec($value);
         }
-
-        if (\UPLOAD_ERR_OK !== $value['error']) {
+        if (\UPLOAD_ERR_OK !== ($error = is_numeric($value['error'] ?? null) ? intval($value['error']) : $value['error'] ?? null)) {
             $stream = $this->streamFactory->createStream();
         } else {
             try {
@@ -205,13 +205,12 @@ class CreatesServerRequest
                 $stream = $this->streamFactory->createStream();
             }
         }
-
         return $this->uploadedFileFactory->createUploadedFile(
             $stream,
-            (int) $value['size'],
-            (int) $value['error'],
-            $value['name'],
-            $value['type']
+            intval($value['size']),
+            $error,
+            $value['name'] ?? null,
+            $value['type'] ?? null
         );
     }
 
