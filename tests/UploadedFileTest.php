@@ -10,19 +10,26 @@ class UploadedFileTest extends TestCase
 {
     protected $cleanup;
 
-    public function setUp(): void
+    public function runSetUp()
     {
         $this->cleanup = [];
         return;
     }
 
-    public function tearDown(): void
+    public function runTearDown()
     {
         foreach ($this->cleanup as $file) {
             if (is_scalar($file) && file_exists($file)) {
                 unlink($file);
             }
         }
+    }
+
+    public function runUnitTest(\Closure $callback)
+    {
+        $this->runSetUp();
+        $callback();
+        $this->runTearDown();
     }
 
     public function invalidStreams()
@@ -41,12 +48,13 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider invalidStreams
      */
-    public function testRaisesExceptionOnInvalidStreamOrFile($streamOrFile)
+    public function test_raises_exception_on_invalid_stream_or_file($streamOrFile)
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Invalid resource provided for file');
-
-        new UploadedFile($streamOrFile, 0, UPLOAD_ERR_OK);
+        $this->runUnitTest(function () use ($streamOrFile) {
+            $this->expectException(\InvalidArgumentException::class);
+            $this->expectExceptionMessage('Invalid resource provided for file');
+            new UploadedFile($streamOrFile, 0, UPLOAD_ERR_OK);
+        });
     }
 
     public function invalidFilenamesAndMediaTypes()
@@ -64,91 +72,97 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider invalidFilenamesAndMediaTypes
      */
-    public function testRaisesExceptionOnInvalidClientFilename($filename)
+    public function test_raises_exception_on_invalid_client_filename($filename)
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('filename');
-
-        new UploadedFile(fopen('php://temp', 'wb+'), 0, UPLOAD_ERR_OK, $filename);
+        $this->runUnitTest(function () use ($filename) {
+            $this->expectException(\InvalidArgumentException::class);
+            $this->expectExceptionMessage('filename');
+            new UploadedFile(fopen('php://temp', 'wb+'), 0, UPLOAD_ERR_OK, $filename);
+        });
     }
 
     /**
      * @dataProvider invalidFilenamesAndMediaTypes
      */
-    public function testRaisesExceptionOnInvalidClientMediaType($mediaType)
+    public function test_raises_exception_on_invalid_client_media_type($mediaType)
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('media type');
-
-        new UploadedFile(fopen('php://temp', 'wb+'), 0, UPLOAD_ERR_OK, 'foobar.baz', $mediaType);
+        $this->runUnitTest(function () use ($mediaType) {
+            $this->expectException(\InvalidArgumentException::class);
+            $this->expectExceptionMessage('media type');
+            new UploadedFile(fopen('php://temp', 'wb+'), 0, UPLOAD_ERR_OK, 'foobar.baz', $mediaType);
+        });
     }
 
-    public function testGetStreamReturnsOriginalStreamObject()
+    public function test_get_stream_returns_original_stream_object()
     {
-        $stream = Streams::create('');
-        $upload = new UploadedFile($stream, 0, UPLOAD_ERR_OK);
-
-        $this->assertSame($stream, $upload->getStream());
+        $this->runUnitTest(function () {
+            $stream = Streams::create('');
+            $upload = new UploadedFile($stream, 0, UPLOAD_ERR_OK);
+            $this->assertSame($stream, $upload->getStream());
+        });
     }
 
-    public function testGetStreamReturnsWrappedPhpStream()
+    public function test_get_stream_returns_wrapped_php_stream()
     {
-        $stream = fopen('php://temp', 'wb+');
-        $upload = new UploadedFile($stream, 0, UPLOAD_ERR_OK);
-        $uploadStream = $upload->getStream()->detach();
-
-        $this->assertSame($stream, $uploadStream);
+        $this->runUnitTest(function () {
+            $stream = fopen('php://temp', 'wb+');
+            $upload = new UploadedFile($stream, 0, UPLOAD_ERR_OK);
+            $uploadStream = $upload->getStream()->detach();
+            $this->assertSame($stream, $uploadStream);
+        });
     }
 
-    public function testGetStream()
+    public function test_get_stream()
     {
-        $upload = new UploadedFile(__DIR__ . '/Resources/foo.txt', 0, UPLOAD_ERR_OK);
-        $stream = $upload->getStream();
-        $this->assertInstanceOf(StreamInterface::class, $stream);
-        $this->assertEquals('Foobar' . PHP_EOL, $stream->__toString());
+        $this->runUnitTest(function () {
+            $upload = new UploadedFile(__DIR__ . '/Resources/foo.txt', 0, UPLOAD_ERR_OK);
+            $stream = $upload->getStream();
+            $this->assertInstanceOf(StreamInterface::class, $stream);
+            $this->assertEquals('Foobar' . PHP_EOL, $stream->__toString());
+        });
     }
 
-    public function testSuccessful()
+    public function test_successful()
     {
-        $stream = Streams::create('Foo bar!');
-        $upload = new UploadedFile($stream, $stream->getSize(), UPLOAD_ERR_OK, 'filename.txt', 'text/plain');
-
-        $this->assertEquals($stream->getSize(), $upload->getSize());
-        $this->assertEquals('filename.txt', $upload->getClientFilename());
-        $this->assertEquals('text/plain', $upload->getClientMediaType());
-
-        $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'successful');
-        $upload->moveTo($to);
-        $this->assertFileExists($to);
-        $this->assertEquals($stream->__toString(), file_get_contents($to));
+        $this->runUnitTest(function () {
+            $stream = Streams::create('Foo bar!');
+            $upload = new UploadedFile($stream, $stream->getSize(), UPLOAD_ERR_OK, 'filename.txt', 'text/plain');
+            $this->assertEquals($stream->getSize(), $upload->getSize());
+            $this->assertEquals('filename.txt', $upload->getClientFilename());
+            $this->assertEquals('text/plain', $upload->getClientMediaType());
+            $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'successful');
+            $upload->moveTo($to);
+            $this->assertFileExists($to);
+            $this->assertEquals($stream->__toString(), file_get_contents($to));
+        });
     }
 
-    public function testMoveCannotBeCalledMoreThanOnce()
+    public function test_move_cannot_be_called_more_than_once()
     {
-        $stream = (new  StreamFactory)->createStream('Foo bar!');
-        $upload = new UploadedFile($stream, 0, UPLOAD_ERR_OK);
-
-        $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'diac');
-        $upload->moveTo($to);
-        $this->assertTrue(file_exists($to));
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('moved');
-        $upload->moveTo($to);
+        $this->runUnitTest(function () {
+            $stream = (new  StreamFactory)->createStream('Foo bar!');
+            $upload = new UploadedFile($stream, 0, UPLOAD_ERR_OK);
+            $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'diac');
+            $upload->moveTo($to);
+            $this->assertTrue(file_exists($to));
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('moved');
+            $upload->moveTo($to);
+        });
     }
 
-    public function testCannotRetrieveStreamAfterMove()
+    public function test_cannot_retrieve_stream_after_move()
     {
-        $stream = (new  StreamFactory)->createStream('Foo bar!');
-        $upload = new UploadedFile($stream, 0, UPLOAD_ERR_OK);
-
-        $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'diac');
-        $upload->moveTo($to);
-        $this->assertFileExists($to);
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('moved');
-        $upload->getStream();
+        $this->runUnitTest(function () {
+            $stream = (new  StreamFactory)->createStream('Foo bar!');
+            $upload = new UploadedFile($stream, 0, UPLOAD_ERR_OK);
+            $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'diac');
+            $upload->moveTo($to);
+            $this->assertFileExists($to);
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('moved');
+            $upload->getStream();
+        });
     }
 
     public function nonOkErrorStatus()
@@ -167,44 +181,49 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider nonOkErrorStatus
      */
-    public function testConstructorDoesNotRaiseExceptionForInvalidStreamWhenErrorStatusPresent($status)
+    public function test_constructor_does_not_raise_exception_for_invalid_stream_when_error_status_present($status)
     {
-        $uploadedFile = new UploadedFile('not ok', 0, $status);
-        $this->assertSame($status, $uploadedFile->getError());
+        $this->runUnitTest(function () use ($status) {
+            $uploadedFile = new UploadedFile('not ok', 0, $status);
+            $this->assertSame($status, $uploadedFile->getError());
+        });
     }
 
     /**
      * @dataProvider nonOkErrorStatus
      */
-    public function testMoveToRaisesExceptionWhenErrorStatusPresent($status)
+    public function test_move_to_raises_exception_when_error_status_present($status)
     {
-        $uploadedFile = new UploadedFile('not ok', 0, $status);
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('upload error');
-        $uploadedFile->moveTo(__DIR__ . '/' . uniqid());
+        $this->runUnitTest(function () use ($status) {
+            $uploadedFile = new UploadedFile('not ok', 0, $status);
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('upload error');
+            $uploadedFile->moveTo(__DIR__ . '/' . uniqid());
+        });
     }
 
     /**
      * @dataProvider nonOkErrorStatus
      */
-    public function testGetStreamRaisesExceptionWhenErrorStatusPresent($status)
+    public function test_get_stream_raises_exception_when_error_status_present($status)
     {
-        $uploadedFile = new UploadedFile('not ok', 0, $status);
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('upload error');
-        $uploadedFile->getStream();
+        $this->runUnitTest(function () use ($status) {
+            $uploadedFile = new UploadedFile('not ok', 0, $status);
+            $this->expectException(\RuntimeException::class);
+            $this->expectExceptionMessage('upload error');
+            $uploadedFile->getStream();
+        });
     }
 
-    public function testMoveToCreatesStreamIfOnlyAFilenameWasProvided()
+    public function test_move_to_creates_stream_if_only_a_filename_was_provided()
     {
-        $this->cleanup[] = $from = tempnam(sys_get_temp_dir(), 'copy_from');
-        $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'copy_to');
-
-        copy(__FILE__, $from);
-
-        $uploadedFile = new UploadedFile($from, 100, UPLOAD_ERR_OK, basename($from), 'text/plain');
-        $uploadedFile->moveTo($to);
-
-        $this->assertFileEquals(__FILE__, $to);
+        $this->runUnitTest(function () {
+            $this->cleanup[] = $from = tempnam(sys_get_temp_dir(), 'copy_from');
+            $this->cleanup[] = $to = tempnam(sys_get_temp_dir(), 'copy_to');
+            copy(__FILE__, $from);
+            $uploadedFile = new UploadedFile($from, 100, UPLOAD_ERR_OK, basename($from), 'text/plain');
+            $uploadedFile->moveTo($to);
+            $this->assertFileEquals(__FILE__, $to);
+        });
     }
 }
