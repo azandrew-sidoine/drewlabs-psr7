@@ -69,6 +69,7 @@ class CreatesServerRequestTest extends TestCase
         parent::setUp();
         self::initTestFiles();
         $this->creator = new CreatesServerRequest();
+        return;
     }
 
     public function normalizeFiles()

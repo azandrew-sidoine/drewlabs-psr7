@@ -13,6 +13,7 @@ class UploadedFileTest extends TestCase
     public function setUp(): void
     {
         $this->cleanup = [];
+        return;
     }
 
     public function tearDown(): void
