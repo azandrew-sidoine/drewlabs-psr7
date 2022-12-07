@@ -74,7 +74,7 @@ final class UploadedFile implements UploadedFileInterface
         }
     
         $this->error = is_numeric($error) ? intval($error) : $error;
-        $this->size = $size;
+        $this->size = ((($size === 0) || (null === $size)) && $resource instanceof StreamInterface) ? $resource->getSize(): $size;
         $this->name = $name;
         $this->mediaType = $mediaType;
 

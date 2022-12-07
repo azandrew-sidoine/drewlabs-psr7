@@ -1,5 +1,7 @@
 <?php
 
+namespace Drewlabs\Psr7\Factories;
+
 use Drewlabs\Psr7\Uri;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
