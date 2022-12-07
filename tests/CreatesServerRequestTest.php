@@ -32,6 +32,13 @@ class CreatesServerRequestTest extends TestCase
         }
     }
 
+    private function setCreatorInstance()
+    {
+        if (null === $this->creator) {
+            $this->creator = new CreatesServerRequest();
+        }
+    }
+
     private static function invoke($objectOrClass, string $method, ...$arguments)
     {
         if (is_string($objectOrClass)) {
@@ -62,14 +69,6 @@ class CreatesServerRequestTest extends TestCase
             }
         }
         return $method->invokeArgs($object, $arguments);
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-        self::initTestFiles();
-        $this->creator = new CreatesServerRequest();
-        return;
     }
 
     public function normalizeFiles()
@@ -303,6 +302,10 @@ class CreatesServerRequestTest extends TestCase
      */
     public function test_normalize_files($files, $expected)
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $result = $this->creator
             ->fromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], $files)
             ->getUploadedFiles();
@@ -337,6 +340,10 @@ class CreatesServerRequestTest extends TestCase
 
     public function test_normalize_files_raises_exception()
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('not a supported value in files specification');
         $this->creator->fromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], ['test' => 'something']);
@@ -344,6 +351,10 @@ class CreatesServerRequestTest extends TestCase
 
     public function test_numeric_header_from_header_array()
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $server = [
             'REQUEST_METHOD' => 'GET',
         ];
@@ -354,6 +365,10 @@ class CreatesServerRequestTest extends TestCase
 
     public function test_from_arrays()
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $server = [
             'PHP_SELF' => '/blog/article.php',
             'GATEWAY_INTERFACE' => 'CGI/1.1',
@@ -438,6 +453,10 @@ class CreatesServerRequestTest extends TestCase
 
     public function getUriFromGlobals()
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         self::initTestFiles();
         $server = [
             'PHP_SELF' => '/blog/article.php',
@@ -578,6 +597,10 @@ class CreatesServerRequestTest extends TestCase
      */
     public function test_failing_stream_from_file()
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $defaultStreamFactory = new StreamFactory;
         $psr17StreamFactory = $this->createMock(StreamFactoryInterface::class);
         $psr17StreamFactory->method('createStreamFromFile')
@@ -608,6 +631,10 @@ class CreatesServerRequestTest extends TestCase
 
     public function test_no_parsed_body_without_post_method()
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $_POST = ['a' => 'b', 'c' => 'd'];
         $instance = $this->creator->fromServerGlobals();
         $this->assertNull($instance->getParsedBody());
@@ -618,6 +645,10 @@ class CreatesServerRequestTest extends TestCase
      */
     public function test_no_parsed_body_with_post_method_without_content_type()
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST = ['a' => 'b', 'c' => 'd'];
         $instance = $this->creator->fromServerGlobals();
@@ -630,6 +661,10 @@ class CreatesServerRequestTest extends TestCase
      */
     public function test_no_parsed_body_with_post_method_different_content_type($parsedBody, $contentType)
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['HTTP_CONTENT_TYPE'] = $contentType;
         $_POST = ['a' => 'b', 'c' => 'd'];
@@ -668,6 +703,10 @@ class CreatesServerRequestTest extends TestCase
      */
     public function test_numeric_header_from_globals()
     {
+        //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
+        self::initTestFiles();
+        $this->setCreatorInstance();
+        //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['HTTP_1234'] = 'NumericHeader';
         $server = $this->creator->fromServerGlobals();
