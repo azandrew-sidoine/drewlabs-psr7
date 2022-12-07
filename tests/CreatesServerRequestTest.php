@@ -64,15 +64,10 @@ class CreatesServerRequestTest extends TestCase
         return $method->invokeArgs($object, $arguments);
     }
 
-    public static function setUpBeforeClass(): void
-    {
-        parent::setUpBeforeClass();
-        self::initTestFiles();
-    }
-
     protected function setUp(): void
     {
         parent::setUp();
+        self::initTestFiles();
         $this->creator = new CreatesServerRequest();
     }
 

@@ -11,10 +11,10 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
 {
     public function createUploadedFile(
         StreamInterface $stream,
-        ?int $size = null,
+        int $size = null,
         int $error = \UPLOAD_ERR_OK,
-        ?string $name = null,
-        ?string $mediaType = null
+        string $name = null,
+        string $mediaType = null
     ): UploadedFileInterface {
         return new UploadedFile($stream, $size, $error, $name, $mediaType);
     }

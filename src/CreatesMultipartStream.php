@@ -57,6 +57,13 @@ class CreatesMultipartStream implements CreatesStream
         return "--{$this->boundary}\r\n" . trim($str) . "\r\n\r\n";
     }
 
+    /**
+     * Creates a append stream instance
+     * 
+     * @return StreamInterface 
+     * @throws UnexpectedValueException 
+     * @throws InvalidArgumentException 
+     */
     public function createStream()
     {
         $stack = new StackedStream();
@@ -81,6 +88,18 @@ class CreatesMultipartStream implements CreatesStream
         return $stack;
     }
 
+    /**
+     * Add a dictionary part to the stream stack
+     * 
+     * @param StackedStream $stream 
+     * @param mixed $name 
+     * @param mixed $contents 
+     * @param mixed $filename 
+     * @param array $headers 
+     * @return void 
+     * @throws InvalidArgumentException 
+     * @throws UnexpectedValueException 
+     */
     private function addDictPart(StackedStream $stream, $name, $contents, $filename = null, $headers = [])
     {
         if (is_scalar($contents) || $contents instanceof StreamInterface) {
@@ -91,7 +110,16 @@ class CreatesMultipartStream implements CreatesStream
         }
     }
 
-
+    /**
+     * Add a list of stream to the append stream instance
+     * 
+     * @param StackedStream $stream 
+     * @param mixed $name 
+     * @param mixed $contents 
+     * @return void 
+     * @throws InvalidArgumentException 
+     * @throws UnexpectedValueException 
+     */
     private function addArrayPart(StackedStream $stream, $name, $contents)
     {
         // We add the [] to tell the HTTP request parser we are sending a list entry
@@ -206,6 +234,13 @@ class CreatesMultipartStream implements CreatesStream
         $stream->push(Stream::new("\r\n"));
     }
 
+    /**
+     * Check if a PHP array is a dictionary
+     * 
+     * @param mixed $content 
+     * @return bool 
+     * @throws UnexpectedValueException 
+     */
     private function isNotAssociativeArray($content)
     {
         if (!is_array($content)) {
@@ -224,6 +259,14 @@ class CreatesMultipartStream implements CreatesStream
         return (array_keys($content) === range(0, count($content) - 1));
     }
 
+    /**
+     * Assert structure of the attributes dictionary
+     * 
+     * @param array $attributes 
+     * @return void 
+     * @throws UnexpectedValueException 
+     * @throws InvalidArgumentException 
+     */
     private function assertDictionary(array $attributes)
     {
         if (!is_array($attributes)) {
