@@ -32,7 +32,7 @@ class UploadedFileTest extends TestCase
         $this->runTearDown();
     }
 
-    public function invalidStreams()
+    public static function invalidStreams()
     {
         return [
             'null' => [null],
@@ -57,7 +57,7 @@ class UploadedFileTest extends TestCase
         });
     }
 
-    public function invalidFilenamesAndMediaTypes()
+    public static function invalidFilenamesAndMediaTypes()
     {
         return [
             'true' => [true],
@@ -165,7 +165,7 @@ class UploadedFileTest extends TestCase
         });
     }
 
-    public function nonOkErrorStatus()
+    public static function nonOkErrorStatus()
     {
         return [
             'UPLOAD_ERR_INI_SIZE' => [UPLOAD_ERR_INI_SIZE],

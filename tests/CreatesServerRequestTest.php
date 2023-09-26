@@ -18,7 +18,7 @@ class CreatesServerRequestTest extends TestCase
     private static $filenames = [];
 
     /** @var CreatesServerRequest */
-    private $creator;
+    private static $creator;
 
     private static function initTestFiles()
     {
@@ -32,10 +32,10 @@ class CreatesServerRequestTest extends TestCase
         }
     }
 
-    private function setCreatorInstance()
+    private static function setCreatorInstance()
     {
-        if (null === $this->creator) {
-            $this->creator = new CreatesServerRequest();
+        if (null === self::$creator) {
+            self::$creator = new CreatesServerRequest();
         }
     }
 
@@ -71,7 +71,7 @@ class CreatesServerRequestTest extends TestCase
         return $method->invokeArgs($object, $arguments);
     }
 
-    public function normalizeFiles()
+    public static function normalizeFiles()
     {
         self::initTestFiles();
 
@@ -306,7 +306,7 @@ class CreatesServerRequestTest extends TestCase
         self::initTestFiles();
         $this->setCreatorInstance();
         //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
-        $result = $this->creator
+        $result = self::$creator
             ->fromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], $files)
             ->getUploadedFiles();
 
@@ -346,7 +346,7 @@ class CreatesServerRequestTest extends TestCase
         //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('not a supported value in files specification');
-        $this->creator->fromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], ['test' => 'something']);
+        self::$creator->fromArrays(['REQUEST_METHOD' => 'POST'], [], [], [], [], ['test' => 'something']);
     }
 
     public function test_numeric_header_from_header_array()
@@ -359,7 +359,7 @@ class CreatesServerRequestTest extends TestCase
             'REQUEST_METHOD' => 'GET',
         ];
 
-        $server = $this->creator->fromArrays($server, ['1234' => 'NumericHeader']);
+        $server = self::$creator->fromArrays($server, ['1234' => 'NumericHeader']);
         $this->assertEquals(['1234' => ['NumericHeader']], $server->getHeaders());
     }
 
@@ -426,7 +426,7 @@ class CreatesServerRequestTest extends TestCase
             ],
         ];
 
-        $server = $this->creator->fromArrays($server, [], $cookie, $get, $post, $files, 'foobar');
+        $server = self::$creator->fromArrays($server, [], $cookie, $get, $post, $files, 'foobar');
 
         $this->assertEquals('POST', $server->getMethod());
         $this->assertEquals(['host' => ['www.blakesimpson.co.uk']], $server->getHeaders());
@@ -451,11 +451,11 @@ class CreatesServerRequestTest extends TestCase
         $this->assertEquals(self::$filenames[10], $file->getStream()->getMetadata('uri'));
     }
 
-    public function getUriFromGlobals()
+    public static function getUriFromGlobals()
     {
         //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         self::initTestFiles();
-        $this->setCreatorInstance();
+        self::setCreatorInstance();
         //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         self::initTestFiles();
         $server = [
@@ -636,7 +636,7 @@ class CreatesServerRequestTest extends TestCase
         $this->setCreatorInstance();
         //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $_POST = ['a' => 'b', 'c' => 'd'];
-        $instance = $this->creator->fromServerGlobals();
+        $instance = self::$creator->fromServerGlobals();
         $this->assertNull($instance->getParsedBody());
     }
 
@@ -651,7 +651,7 @@ class CreatesServerRequestTest extends TestCase
         //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_POST = ['a' => 'b', 'c' => 'd'];
-        $instance = $this->creator->fromServerGlobals();
+        $instance = self::$creator->fromServerGlobals();
         $this->assertNull($instance->getParsedBody());
     }
 
@@ -668,11 +668,11 @@ class CreatesServerRequestTest extends TestCase
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['HTTP_CONTENT_TYPE'] = $contentType;
         $_POST = ['a' => 'b', 'c' => 'd'];
-        $instance = $this->creator->fromServerGlobals();
+        $instance = self::$creator->fromServerGlobals();
         $this->assertSame($parsedBody ? $_POST : null, $instance->getParsedBody());
     }
 
-    public function contentTypesThatTriggerParsedBody()
+    public static function contentTypesThatTriggerParsedBody()
     {
         return [
             // Acceptable values
@@ -709,7 +709,7 @@ class CreatesServerRequestTest extends TestCase
         //#endregion Because of PHP 7.0 issues we can not use the setUp method of PHP unit
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['HTTP_1234'] = 'NumericHeader';
-        $server = $this->creator->fromServerGlobals();
+        $server = self::$creator->fromServerGlobals();
         $this->assertEquals(['1234' => ['NumericHeader']], $server->getHeaders());
     }
 }
