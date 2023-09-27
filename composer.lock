@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe3e49c4b8b5cb79e8a5746ac1d63c88",
+    "content-hash": "26a7a175a09fa92cf4a59824c2c549ab",
     "packages": [
         {
             "name": "drewlabs/psr7-stream",

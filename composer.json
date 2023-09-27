@@ -23,7 +23,7 @@
     "require": {
         "php": ">=7.0",
         "psr/http-message": "^1.0|^2.0",
-        "drewlabs/psr7-stream": "^1.0|^2.0"
+        "drewlabs/psr7-stream": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": ">=6.0",
