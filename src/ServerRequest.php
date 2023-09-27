@@ -70,41 +70,41 @@ class ServerRequest implements ServerRequestInterface
         $this->serverParams = $serverParams;
     }
 
-    public function getServerParams()
+    public function getServerParams(): array
     {
-        return $this->serverParams;
+        return $this->serverParams ?? [];
     }
 
-    public function getCookieParams()
+    public function getCookieParams(): array
     {
-        return $this->cookieParams;
+        return $this->cookieParams ?? [];
     }
 
-    public function withCookieParams(array $cookies)
+    public function withCookieParams(array $cookies): ServerRequestInterface
     {
         $object = clone $this;
         $object->cookieParams = $cookies;
         return $object;
     }
 
-    public function getQueryParams()
+    public function getQueryParams(): array
     {
-        return $this->queryParams;
+        return $this->queryParams ?? [];
     }
 
-    public function withQueryParams(array $query)
+    public function withQueryParams(array $query): ServerRequestInterface
     {
         $object = clone $this;
         $object->queryParams = $query;
         return $object;
     }
 
-    public function getUploadedFiles()
+    public function getUploadedFiles(): array 
     {
-        return $this->files;
+        return $this->files ?? [];
     }
 
-    public function withUploadedFiles(array $uploadedFiles)
+    public function withUploadedFiles(array $uploadedFiles): ServerRequestInterface
     {
         $object = clone $this;
         $object->files = $uploadedFiles;
@@ -116,7 +116,7 @@ class ServerRequest implements ServerRequestInterface
         return $this->parsedBody;
     }
 
-    public function withParsedBody($data)
+    public function withParsedBody($data): ServerRequestInterface
     {
         if (!\is_array($data) && !\is_object($data) && null !== $data) {
             throw new \InvalidArgumentException('withParsedBody expects array, object or null as parameter, got ' . (gettype($data)));
@@ -126,9 +126,9 @@ class ServerRequest implements ServerRequestInterface
         return $object;
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
-        return $this->attributes;
+        return $this->attributes ?? [];
     }
 
     public function getAttribute($name, $default = null)
@@ -139,14 +139,14 @@ class ServerRequest implements ServerRequestInterface
         return $this->attributes[$name];
     }
 
-    public function withAttribute($name, $value)
+    public function withAttribute($name, $value): ServerRequestInterface
     {
         $object = clone $this;
         $object->attributes[$name] = $value;
         return $object;
     }
 
-    public function withoutAttribute($name)
+    public function withoutAttribute($name): ServerRequestInterface
     {
         if (!array_key_exists($name, $this->attributes ?? [])) {
             return $this;

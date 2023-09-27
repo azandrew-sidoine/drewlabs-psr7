@@ -2,6 +2,8 @@
 
 namespace Drewlabs\Psr7;
 
+use Psr\Http\Message\ResponseInterface;
+
 trait ResponseTrait
 {
     /**
@@ -11,19 +13,19 @@ trait ResponseTrait
     private $statusCode;
 
     #[\ReturnTypeWillChange]
-    public function getStatusCode()
+    public function getStatusCode(): int
     {
-        return $this->statusCode;
+        return intval($this->statusCode);
     }
 
     #[\ReturnTypeWillChange]
-    public function getReasonPhrase()
+    public function getReasonPhrase(): string
     {
-        return $this->reasonPhrase;
+        return $this->reasonPhrase ?? '';
     }
 
     #[\ReturnTypeWillChange]
-    public function withStatus($code, $reason = '')
+    public function withStatus($code, $reason = ''): ResponseInterface
     {
         $this->assertStatusCodeIsInteger($code);
         $code = (int) $code;

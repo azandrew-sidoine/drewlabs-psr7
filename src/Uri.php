@@ -92,13 +92,13 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function getScheme()
+    public function getScheme(): string
     {
         return $this->scheme;
     }
 
     #[\ReturnTypeWillChange]
-    public function getAuthority()
+    public function getAuthority(): string
     {
         if ('' === $this->host) {
             return '';
@@ -117,43 +117,43 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function getUserInfo()
+    public function getUserInfo(): string
     {
         return $this->userInfo;
     }
 
     #[\ReturnTypeWillChange]
-    public function getHost()
+    public function getHost(): string
     {
-        return $this->host;
+        return $this->host ?? '';
     }
 
     #[\ReturnTypeWillChange]
-    public function getPort()
+    public function getPort(): ?int
     {
-        return $this->port;
+        return $this->port ? intval($this->port) : null;
     }
 
     #[\ReturnTypeWillChange]
-    public function getPath()
+    public function getPath(): string
     {
         return $this->path;
     }
 
     #[\ReturnTypeWillChange]
-    public function getQuery()
+    public function getQuery(): string
     {
-        return $this->query;
+        return $this->query ?? '';
     }
 
     #[\ReturnTypeWillChange]
-    public function getFragment()
+    public function getFragment(): string
     {
-        return $this->fragment;
+        return $this->fragment ?? '';
     }
 
     #[\ReturnTypeWillChange]
-    public function withScheme($scheme)
+    public function withScheme($scheme): UriInterface
     {
         if (!\is_string($scheme)) {
             throw new \InvalidArgumentException('Scheme must be a string');
@@ -170,7 +170,7 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function withUserInfo($user, $password = null)
+    public function withUserInfo($user, $password = null): UriInterface
     {
         $info = $user;
         if (null !== $password && '' !== $password) {
@@ -187,7 +187,7 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function withHost($host)
+    public function withHost($host): UriInterface
     {
         if (!\is_string($host)) {
             throw new \InvalidArgumentException('Host must be a string');
@@ -203,7 +203,7 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function withPort($port)
+    public function withPort($port): UriInterface
     {
         if ($this->port === ($port = $this->filterPort($port))) {
             return $this;
@@ -215,7 +215,7 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function withPath($path)
+    public function withPath($path): UriInterface
     {
         if ($this->path === ($path = $this->filterPath($path))) {
             return $this;
@@ -227,7 +227,7 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function withQuery($query)
+    public function withQuery($query): UriInterface
     {
         if ($this->query === ($query = $this->filterQueryAndFragment($query))) {
             return $this;
@@ -239,7 +239,7 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function withFragment($fragment)
+    public function withFragment($fragment): UriInterface
     {
         if ($this->fragment === ($fragment = $this->filterQueryAndFragment($fragment))) {
             return $this;

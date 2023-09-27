@@ -3,10 +3,11 @@
 namespace Drewlabs\Psr7;
 
 use Drewlabs\Psr7Stream\Stream;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
 /**
- * Trait implementing functionality common to requests and responses.
+ * @extends MessageInterface
  */
 trait Message
 {
@@ -29,13 +30,13 @@ trait Message
     private $stream;
 
     #[\ReturnTypeWillChange]
-    public function getProtocolVersion()
+    public function getProtocolVersion(): string
     {
         return $this->protocol;
     }
 
     #[\ReturnTypeWillChange]
-    public function withProtocolVersion($version)
+    public function withProtocolVersion($version): MessageInterface
     {
         if ($this->protocol === $version) {
             return $this;
@@ -46,33 +47,33 @@ trait Message
     }
 
     #[\ReturnTypeWillChange]
-    public function getHeaders()
+    public function getHeaders(): array
     {
         return $this->headers->toArray();
     }
 
     #[\ReturnTypeWillChange]
-    public function hasHeader($header)
+    public function hasHeader($header): bool
     {
         return $this->headers->offsetExists($header);
     }
 
     #[\ReturnTypeWillChange]
-    public function getHeader($header)
+    public function getHeader($header): array
     {
         return $this->headers->get($header);
     }
 
 
     #[\ReturnTypeWillChange]
-    public function getHeaderLine($header)
+    public function getHeaderLine($header): string
     {
         return implode(', ', $this->getHeader($header));
     }
 
 
     #[\ReturnTypeWillChange]
-    public function withHeader($header, $value)
+    public function withHeader($header, $value): MessageInterface
     {
         /**
          * @var self
@@ -80,11 +81,12 @@ trait Message
         $object = (clone $this);
         $object->headers->offsetUnset($header);
         $object->headers->set($header, $value);
+
         return $object;
     }
 
     #[\ReturnTypeWillChange]
-    public function withAddedHeader($header, $value)
+    public function withAddedHeader($header, $value): MessageInterface
     {
         /**
          * @var object
@@ -95,7 +97,7 @@ trait Message
     }
 
     #[\ReturnTypeWillChange]
-    public function withoutHeader($header)
+    public function withoutHeader($header): MessageInterface
     {
         /**
          * @var object
@@ -105,14 +107,14 @@ trait Message
         return $object;
     }
 
-    public function getBody()
+    public function getBody(): StreamInterface
     {
         return $this->stream instanceof StreamInterface ?
             $this->stream :
             Stream::new($this->stream);
     }
 
-    public function withBody(StreamInterface $body)
+    public function withBody(StreamInterface $body): MessageInterface
     {
         if (is_string($body)) {
             $body = Stream::new($body);
@@ -122,6 +124,7 @@ trait Message
         }
         $object = clone $this;
         $object->stream = $body;
+
         return $object;
     }
 

@@ -72,9 +72,9 @@ final class UploadedFile implements UploadedFileInterface
         if (null !== $mediaType && !\is_string($mediaType)) {
             throw new InvalidArgumentException('file client media type must be a string or null');
         }
-    
+
         $this->error = is_numeric($error) ? intval($error) : $error;
-        $this->size = ((($size === 0) || (null === $size)) && $resource instanceof StreamInterface) ? $resource->getSize(): $size;
+        $this->size = ((($size === 0) || (null === $size)) && $resource instanceof StreamInterface) ? $resource->getSize() : $size;
         $this->name = $name;
         $this->mediaType = $mediaType;
 
@@ -83,11 +83,12 @@ final class UploadedFile implements UploadedFileInterface
         }
     }
 
-    public function moveTo($targetPath)
+    public function moveTo($targetPath): void
     {
         $this->assertMoved();
         if (null !== $this->path) {
-            return $this->rename($targetPath);
+            $this->rename($targetPath);
+            return;
         }
         $this->moveStream($targetPath);
     }

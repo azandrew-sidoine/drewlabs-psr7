@@ -3,6 +3,7 @@
 namespace Drewlabs\Psr7;
 
 use InvalidArgumentException;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\UriInterface;
 
 trait RequestTrait
@@ -38,7 +39,7 @@ trait RequestTrait
     }
 
     #[\ReturnTypeWillChange]
-    public function getRequestTarget()
+    public function getRequestTarget(): string
     {
         if ($this->requestTarget !== null) {
             return $this->requestTarget;
@@ -55,7 +56,7 @@ trait RequestTrait
     }
 
     #[\ReturnTypeWillChange]
-    public function withRequestTarget($requestTarget)
+    public function withRequestTarget($requestTarget): RequestInterface
     {
         if (preg_match('#\s#', $requestTarget)) {
             throw new InvalidArgumentException(
@@ -69,13 +70,13 @@ trait RequestTrait
     }
 
     #[\ReturnTypeWillChange]
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
 
     #[\ReturnTypeWillChange]
-    public function withMethod($method)
+    public function withMethod($method): RequestInterface
     {
         $this->assertMethod($method);
         $object = clone $this;
@@ -85,13 +86,13 @@ trait RequestTrait
 
 
     #[\ReturnTypeWillChange]
-    public function getUri()
+    public function getUri(): UriInterface
     {
         return $this->uri;
     }
 
     #[\ReturnTypeWillChange]
-    public function withUri(UriInterface $uri, $preserveHost = false)
+    public function withUri(UriInterface $uri, $preserveHost = false): RequestInterface
     {
         if ($uri === $this->getUri()) {
             return $this;
