@@ -4,26 +4,26 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4fa95cb8b45043fb1005d4f1a00647e9",
+    "content-hash": "fe3e49c4b8b5cb79e8a5746ac1d63c88",
     "packages": [
         {
             "name": "drewlabs/psr7-stream",
-            "version": "v1.2.4",
+            "version": "v2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream.git",
-                "reference": "b10f82fd8ff6ff9594e24dc138a34597067264dd"
+                "reference": "57a55eb81f56689c95cf473fe1a6161a5cd4ef72"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-psr7-stream/zipball/b10f82fd8ff6ff9594e24dc138a34597067264dd",
-                "reference": "b10f82fd8ff6ff9594e24dc138a34597067264dd",
+                "url": "https://api.github.com/repos/azandrew-sidoine/drewlabs-psr7-stream/zipball/57a55eb81f56689c95cf473fe1a6161a5cd4ef72",
+                "reference": "57a55eb81f56689c95cf473fe1a6161a5cd4ef72",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.0",
+                "php": ">=7.2",
                 "psr/http-factory": "^1.0",
-                "psr/http-message": "^1.0"
+                "psr/http-message": "^2.0"
             },
             "require-dev": {
                 "phpunit/phpunit": ">=6.0"
@@ -48,11 +48,15 @@
                 }
             ],
             "description": "Provides utility classes and implementations for the PSR7 stream interface",
+            "keywords": [
+                "psr",
+                "stream"
+            ],
             "support": {
                 "issues": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/issues",
-                "source": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/tree/v1.2.4"
+                "source": "https://github.com/azandrew-sidoine/drewlabs-psr7-stream/tree/v2.0"
             },
-            "time": "2022-12-07T16:05:30+00:00"
+            "time": "2023-09-27T16:52:09+00:00"
         },
         {
             "name": "psr/http-factory",
@@ -111,16 +115,16 @@
         },
         {
             "name": "psr/http-message",
-            "version": "1.1",
+            "version": "2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/php-fig/http-message.git",
-                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba"
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/http-message/zipball/cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
-                "reference": "cb6ce4845ce34a8ad9e68117c10ee90a29919eba",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/402d35bcb92c70c026d1a6a9883f06b2ead23d71",
+                "reference": "402d35bcb92c70c026d1a6a9883f06b2ead23d71",
                 "shasum": ""
             },
             "require": {
@@ -129,7 +133,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.1.x-dev"
+                    "dev-master": "2.0.x-dev"
                 }
             },
             "autoload": {
@@ -144,7 +148,7 @@
             "authors": [
                 {
                     "name": "PHP-FIG",
-                    "homepage": "http://www.php-fig.org/"
+                    "homepage": "https://www.php-fig.org/"
                 }
             ],
             "description": "Common interface for HTTP messages",
@@ -158,9 +162,9 @@
                 "response"
             ],
             "support": {
-                "source": "https://github.com/php-fig/http-message/tree/1.1"
+                "source": "https://github.com/php-fig/http-message/tree/2.0"
             },
-            "time": "2023-04-04T09:50:52+00:00"
+            "time": "2023-04-04T09:54:51+00:00"
         }
     ],
     "packages-dev": [
