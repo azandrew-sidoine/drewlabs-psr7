@@ -86,7 +86,7 @@ final class Uri implements UriInterface
     }
 
     #[\ReturnTypeWillChange]
-    public function __toString()
+    public function __toString(): string
     {
         return self::createUriString($this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment);
     }
