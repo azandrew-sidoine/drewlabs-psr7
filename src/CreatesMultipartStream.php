@@ -6,22 +6,17 @@ use Closure;
 use Drewlabs\Psr7Stream\CreatesStream;
 use Drewlabs\Psr7Stream\StackedStream;
 use Drewlabs\Psr7Stream\Stream;
+use Drewlabs\Psr7Stream\Utils;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use UnexpectedValueException;
 
 class CreatesMultipartStream implements CreatesStream
 {
-    /**
-     * 
-     * @var array<array<string,mixed>>
-     */
+    /** @var array<array<string,mixed>> */
     private $attributes;
 
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $boundary;
 
     public function __construct(array $attributes, string $boundary = null)
@@ -102,9 +97,25 @@ class CreatesMultipartStream implements CreatesStream
      */
     private function addDictPart(StackedStream $stream, $name, $contents, $filename = null, $headers = [])
     {
-        if (is_scalar($contents) || $contents instanceof StreamInterface) {
+        if (is_scalar($contents) || is_resource($contents) || $contents instanceof StreamInterface) {
             return $this->addPart($stream, $name, $contents, $filename, $headers);
         }
+
+        if ($contents instanceof \SplFileInfo  && $contents->isReadable() && is_resource($resource = Utils::tryFopen(realpath($contents->getPathname()), 'r'))) {
+            $this->addPart($stream, $name, $resource, $filename, $headers);
+            return;
+        }
+
+        if (is_scalar($contents) || is_resource($contents)) {
+            $this->addPart($stream, $name, $contents, $filename, $headers);
+            return;
+        }
+
+        if ($contents instanceof StreamInterface) {
+            $this->addStream($stream, $name, $contents, $filename, $headers);
+            return;
+        }
+
         if (is_array($contents) && $this->isNotAssociativeArray($contents)) {
             return $this->addArrayPart($stream, $name, $contents);
         }
@@ -136,27 +147,57 @@ class CreatesMultipartStream implements CreatesStream
                 continue;
             }
 
-            if (is_scalar($content) || $content instanceof StreamInterface) {
+            if ($content instanceof \SplFileInfo && $content->isReadable() && is_resource($resource = Utils::tryFopen(realpath($content->getPathname()), 'r'))) {
+                $this->addPart($stream, $name . '[' . $index . ']', $resource, $content->getFilename(), []);
+                continue;
+            }
+
+            if (is_scalar($content) || is_resource($content)) {
                 $this->addPart($stream, $name . '[' . $index . ']', $content, null, []);
                 continue;
             }
+
+            if ($content instanceof StreamInterface) {
+                $this->addStream($stream, $name . '[' . $index . ']', $content, null, []);
+                continue;
+            }
+
             throw new UnexpectedValueException('Unable to parse multipart value ' . is_array($content) ? json_encode($content) : strval($content));
         }
     }
-
 
     /**
      * Add a multipart to the stacked stream
      * 
      * @param StackedStream $stream 
-     * @param array $attribute 
+     * @param mixed $name 
+     * @param string|resource $contents 
+     * @param mixed $filename 
+     * @param array $headers 
      * @return void 
      * @throws InvalidArgumentException 
      */
     private function addPart(StackedStream $stream, $name, $contents, $filename = null, $headers = [])
     {
-        $contents = Stream::new(is_scalar($contents) ? (string)$contents : $contents);
-        if (empty($filename = ($attribute['filename'] ?? null))) {
+        $contents = Stream::new($contents);
+        $this->addStream($stream, $name, $contents, $filename, $headers);
+    }
+
+
+    /**
+     * Push a psr stream on top of stack stream
+     * 
+     * @param StackedStream $stream 
+     * @param mixed $name 
+     * @param StreamInterface $contents 
+     * @param mixed $filename 
+     * @param array $headers 
+     * @return void 
+     * @throws InvalidArgumentException 
+     */
+    private function addStream(StackedStream $stream, $name, StreamInterface $contents, $filename, $headers = [])
+    {
+        if (empty($filename)) {
             $uri = $contents->getMetadata('uri');
             if ($uri && \is_string($uri) && \substr($uri, 0, 6) !== 'php://' && \substr($uri, 0, 7) !== 'data://') {
                 $filename = $uri;

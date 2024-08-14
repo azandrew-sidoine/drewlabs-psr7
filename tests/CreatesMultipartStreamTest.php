@@ -21,4 +21,25 @@ class CreatesMultipartStreamTest extends TestCase
         $this->assertNotEmpty($stream->__toString());
     }
 
+    public function test_creates_multipart__spfile_info_to_string()
+    {
+        $stream = Streams::lazy(new CreatesMultipartStream([
+            [
+                'name' => 'post_id',
+                'contents' => '2'
+            ],
+            [
+                'name' => 'class',
+                'contents' => new \SplFileInfo(__DIR__ . '/' . __CLASS__ . '.php'),
+            ],
+            [
+                'name' => 'files',
+                'contents' => [
+                    new \SplFileInfo(__DIR__ . '/requests.php'),
+                    new \SplFileInfo(__DIR__ . '/' . __CLASS__ . '.php'),
+                ]
+            ]
+        ]));
+        $this->assertNotEmpty($stream->__toString());
+    }
 }
