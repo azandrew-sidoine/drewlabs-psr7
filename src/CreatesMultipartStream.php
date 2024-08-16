@@ -179,7 +179,7 @@ class CreatesMultipartStream implements CreatesStream
      */
     private function addPart(StackedStream $stream, $name, $contents, $filename = null, $headers = [])
     {
-        $contents = Stream::new($contents);
+        $contents = Stream::new(is_scalar($contents) ? strval($contents) : $contents);
         $this->addStream($stream, $name, $contents, $filename, $headers);
     }
 
