@@ -1,5 +1,6 @@
 Notes.md
 .DS_Store
-/vendor/
-/vscode/
+vendor/
+.vscode/
 index.php
+.phpunit.cache/
