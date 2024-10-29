@@ -5,6 +5,7 @@ use Drewlabs\Psr7\UploadedFile;
 use Drewlabs\Psr7Stream\StreamFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UploadedFileTest extends TestCase
 {
@@ -48,6 +49,7 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider invalidStreams
      */
+    #[DataProvider('invalidStreams')]
     public function test_raises_exception_on_invalid_stream_or_file($streamOrFile)
     {
         $this->runUnitTest(function () use ($streamOrFile) {
@@ -72,6 +74,7 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider invalidFilenamesAndMediaTypes
      */
+    #[DataProvider('invalidFilenamesAndMediaTypes')]
     public function test_raises_exception_on_invalid_client_filename($filename)
     {
         $this->runUnitTest(function () use ($filename) {
@@ -84,6 +87,7 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider invalidFilenamesAndMediaTypes
      */
+    #[DataProvider('invalidFilenamesAndMediaTypes')]
     public function test_raises_exception_on_invalid_client_media_type($mediaType)
     {
         $this->runUnitTest(function () use ($mediaType) {
@@ -181,6 +185,7 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider nonOkErrorStatus
      */
+    #[DataProvider('nonOkErrorStatus')]
     public function test_constructor_does_not_raise_exception_for_invalid_stream_when_error_status_present($status)
     {
         $this->runUnitTest(function () use ($status) {
@@ -192,6 +197,7 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider nonOkErrorStatus
      */
+    #[DataProvider('nonOkErrorStatus')]
     public function test_move_to_raises_exception_when_error_status_present($status)
     {
         $this->runUnitTest(function () use ($status) {
@@ -205,6 +211,7 @@ class UploadedFileTest extends TestCase
     /**
      * @dataProvider nonOkErrorStatus
      */
+    #[DataProvider('nonOkErrorStatus')]
     public function test_get_stream_raises_exception_when_error_status_present($status)
     {
         $this->runUnitTest(function () use ($status) {

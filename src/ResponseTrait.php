@@ -6,11 +6,11 @@ use Psr\Http\Message\ResponseInterface;
 
 trait ResponseTrait
 {
-    /**
-     * 
-     * @var int
-     */
+    /** @var int */
     private $statusCode;
+
+    /** @var string */
+    private $reasonPhrase;
 
     #[\ReturnTypeWillChange]
     public function getStatusCode(): int

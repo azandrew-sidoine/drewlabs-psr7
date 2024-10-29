@@ -9,6 +9,8 @@ use Drewlabs\Psr7\Uri;
 use Drewlabs\Psr7Stream\StreamFactory;
 use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\BackupGlobals;
 
 class CreatesServerRequestTest extends TestCase
 {
@@ -300,6 +302,7 @@ class CreatesServerRequestTest extends TestCase
     /**
      * @dataProvider normalizeFiles
      */
+    #[DataProvider('normalizeFiles')]
     public function test_normalize_files($files, $expected)
     {
         //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
@@ -538,6 +541,7 @@ class CreatesServerRequestTest extends TestCase
     /**
      * @dataProvider getUriFromGlobals
      */
+    #[DataProvider('getUriFromGlobals')]
     public function test_get_uri_from_flobals($expected, $serverParams)
     {
         $this->assertEquals(new Uri($expected), static::invoke(Uri::class, 'createFromServerGlobal', $serverParams));
@@ -606,7 +610,7 @@ class CreatesServerRequestTest extends TestCase
         $psr17StreamFactory->method('createStreamFromFile')
             ->will($this->throwException(new \RuntimeException()));
         $psr17StreamFactory->method('createStream')
-            ->will($this->returnCallback([$defaultStreamFactory, 'createStream']));
+            ->willReturnCallback([$defaultStreamFactory, 'createStream']);
         $creator = new CreatesServerRequest(null, null, $psr17StreamFactory);
         $expected = new UploadedFile(
             '',
@@ -643,6 +647,7 @@ class CreatesServerRequestTest extends TestCase
     /**
      * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function test_no_parsed_body_with_post_method_without_content_type()
     {
         //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
@@ -659,6 +664,8 @@ class CreatesServerRequestTest extends TestCase
      * @backupGlobals enabled
      * @dataProvider contentTypesThatTriggerParsedBody
      */
+    #[BackupGlobals(true)]
+    #[DataProvider('contentTypesThatTriggerParsedBody')]
     public function test_no_parsed_body_with_post_method_different_content_type($parsedBody, $contentType)
     {
         //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
@@ -677,23 +684,29 @@ class CreatesServerRequestTest extends TestCase
         return [
             // Acceptable values
             'Standard HTML Form' => [
-                true, 'application/x-www-form-urlencoded',
+                true,
+                'application/x-www-form-urlencoded',
             ],
             'HTML Form with MIME body' => [
-                true, 'multipart/form-data',
+                true,
+                'multipart/form-data',
             ],
             'Standard HTML Form, mixed case MIME' => [
-                true, 'appLication/x-WWW-form-URLEncoded',
+                true,
+                'appLication/x-WWW-form-URLEncoded',
             ],
             'Standard HTML Form, surrounding whitespace' => [
-                true, '  application/x-www-form-urlencoded ',
+                true,
+                '  application/x-www-form-urlencoded ',
             ],
             'Standard HTML Form, with flags' => [
-                true, 'application/x-www-form-urlencoded;charset=utf-8',
+                true,
+                'application/x-www-form-urlencoded;charset=utf-8',
             ],
             // Nonacceptable values
             'JSON is not parsed by PHP' => [
-                false, 'application/json',
+                false,
+                'application/json',
             ],
         ];
     }
@@ -701,6 +714,7 @@ class CreatesServerRequestTest extends TestCase
     /**
      * @backupGlobals enabled
      */
+    #[BackupGlobals(true)]
     public function test_numeric_header_from_globals()
     {
         //#region Because of PHP 7.0 issues we can not use the setUp method of PHP unit
