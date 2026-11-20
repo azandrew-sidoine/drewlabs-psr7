@@ -18,13 +18,8 @@ trait RequestTrait
     protected $uri;
 
 
-    private function initDefaultAttributes(
-        string $method = 'GET',
-        $uri = null,
-        array $headers = [],
-        $body = null,
-        string $version = '1.1'
-    ) {
+    private function initDefaultAttributes(string $method = 'GET', $uri = null, array $headers = [], $body = null, string $version = '1.1')
+    {
         $this->assertMethod($method);
         $this->method = strtoupper($method);
         $this->uri = Uri::new($uri);
@@ -55,13 +50,12 @@ trait RequestTrait
         return $target;
     }
 
+    /** @param string $requestTarget */
     #[\ReturnTypeWillChange]
     public function withRequestTarget($requestTarget): RequestInterface
     {
-        if (preg_match('#\s#', $requestTarget)) {
-            throw new InvalidArgumentException(
-                'Invalid request target provided; cannot contain whitespace'
-            );
+        if (preg_match('#\s#', (string)$requestTarget)) {
+            throw new InvalidArgumentException('Invalid request target provided; cannot contain whitespace');
         }
 
         $object = clone $this;
@@ -75,6 +69,7 @@ trait RequestTrait
         return $this->method;
     }
 
+    /** @param string $method */
     #[\ReturnTypeWillChange]
     public function withMethod($method): RequestInterface
     {

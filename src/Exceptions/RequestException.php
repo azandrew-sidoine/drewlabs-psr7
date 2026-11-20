@@ -9,16 +9,10 @@ use Psr\Http\Message\ResponseInterface;
 
 class RequestException extends Exception implements RequestExceptionInterface
 {
-    /**
-     * 
-     * @var RequestInterface
-     */
+    /** @var RequestInterface */
     private $request;
 
-    /**
-     * 
-     * @var ResponseInterface
-     */
+    /** @var ResponseInterface */
     private $response;
 
     /**
@@ -28,12 +22,8 @@ class RequestException extends Exception implements RequestExceptionInterface
      * @param string $message 
      * @param mixed $errorcode 
      */
-    public function __construct(
-        RequestInterface $request,
-        string $message = 'Server Error',
-        $errorcode = 500,
-        ResponseInterface $response = null
-    ) {
+    public function __construct(RequestInterface $request, string $message = 'Server Error', $errorcode = 500, ?ResponseInterface $response = null)
+    {
         parent::__construct($message, $errorcode ?? ($response ? $response->getStatusCode() : null));
         $this->request = $request;
         $this->response = $response;

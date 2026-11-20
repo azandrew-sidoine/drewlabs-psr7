@@ -7,33 +7,24 @@ use Drewlabs\Psr7Stream\Stream;
 
 class CreatesJSONStream implements CreatesStream
 {
-    /**
-     * 
-     * @var array|\JsonSerializable|object
-     */
+    /** @var mixed */
     private $value;
 
-    /**
-     * 
-     * @var int
-     */
+    /** @var int */
     private $depth = 512;
 
-    /**
-     * 
-     * @var int
-     */
+    /** @var int */
     private $flags = JSON_PRETTY_PRINT;
 
     /**
-     * Create a JSON encoder stream
+     * creates a JSON encoder stream
      * 
      * @param array|\JsonSerializable|object $value 
      * @param null|int $depth 
      * @param int $flags 
      * @return void 
      */
-    public function __construct($value, int $depth = null, int $flags = 0)
+    public function __construct($value, ?int $depth = null, int $flags = 0)
     {
         $this->value = $value ?? [];
         $this->depth = $depth ?? 512;

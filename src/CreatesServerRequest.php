@@ -12,25 +12,16 @@ use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\UploadedFileFactoryInterface;
 use Psr\Http\Message\UploadedFileInterface;
 
-class CreatesServerRequest
+final class CreatesServerRequest
 {
 
-    /**
-     * 
-     * @var ServerRequestFactoryInterface
-     */
+    /** @var ServerRequestFactoryInterface */
     private $serverRequestFactory;
 
-    /**
-     * 
-     * @var StreamFactoryInterface
-     */
+    /** @var StreamFactoryInterface */
     private $streamFactory;
 
-    /**
-     * 
-     * @var UploadedFileFactoryInterface
-     */
+    /**  @var UploadedFileFactoryInterface */
     private $uploadedFileFactory;
 
     /**
@@ -41,11 +32,8 @@ class CreatesServerRequest
      * @param UploadedFileFactoryInterface|null $uploadedFileFactory 
      * 
      */
-    public function __construct(
-        ServerRequestFactoryInterface $serverRequestFactory = null,
-        UploadedFileFactoryInterface $uploadedFileFactory = null,
-        StreamFactoryInterface $streamFactory = null
-    ) {
+    public function __construct(?ServerRequestFactoryInterface $serverRequestFactory = null, ?UploadedFileFactoryInterface $uploadedFileFactory = null, ?StreamFactoryInterface $streamFactory = null)
+    {
         $this->serverRequestFactory = $serverRequestFactory ?? new ServerRequestFactory;
         $this->streamFactory = $streamFactory ?? new StreamFactory;
         $this->uploadedFileFactory = $uploadedFileFactory ?? new UploadedFileFactory;
@@ -92,27 +80,18 @@ class CreatesServerRequest
      * @return ServerRequestInterface 
      * @throws InvalidArgumentException 
      */
-    public function fromArrays(
-        array $server,
-        $headers = [],
-        array $cookie = [],
-        array $get = [],
-        array $post = null,
-        array $files = [],
-        $body = null
-    ) {
+    public function fromArrays(array $server, $headers = [], array $cookie = [], array $get = [], ?array $post = null, array $files = [], $body = null)
+    {
         if (!isset($server['REQUEST_METHOD'])) {
             throw new \InvalidArgumentException('Cannot determine HTTP method');
         }
         $method = $server['REQUEST_METHOD'];
         $uri = Uri::createFromEnvWithHTTP($server);
-        $protocol = isset($server['SERVER_PROTOCOL']) ?
-            \str_replace('HTTP/', '', $server['SERVER_PROTOCOL']) :
-            '1.1';
-        /**
-         * @var ServerRequestInterface
-         */
+        $protocol = isset($server['SERVER_PROTOCOL']) ? \str_replace('HTTP/', '', $server['SERVER_PROTOCOL']) : '1.1';
+
+        /** @var ServerRequestInterface */
         $serverRequest = $this->serverRequestFactory->createServerRequest($method, $uri, $server);
+
         foreach ($headers as $name => $value) {
             $serverRequest = $serverRequest->withAddedHeader($name, $value);
         }
@@ -170,6 +149,7 @@ class CreatesServerRequest
     private function normalizeFiles(array $files): array
     {
         $normalized = [];
+
         foreach ($files as $key => $value) {
             if ($value instanceof UploadedFileInterface) {
                 $normalized[$key] = $value;

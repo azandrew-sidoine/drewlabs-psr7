@@ -23,13 +23,8 @@ class Request implements RequestInterface
      * @return void 
      * @throws InvalidArgumentException 
      */
-    public function __construct(
-        string $method = 'GET',
-        $uri = null,
-        array $headers = [],
-        $body = null,
-        string $version = '1.1'
-    ) {
+    public function __construct(string $method = 'GET', $uri = null, array $headers = [], $body = null, string $version = '1.1')
+    {
         $this->initDefaultAttributes($method, $uri, $headers ?? [], $body, $version);
     }
 }

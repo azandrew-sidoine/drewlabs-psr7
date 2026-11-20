@@ -185,20 +185,6 @@ final class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Throws an exception if the target path is not a valid string nor system path
-     * 
-     * @param mixed $path 
-     * @return void 
-     * @throws InvalidArgumentException 
-     */
-    private function assertTargetPath($path)
-    {
-        if (!\is_string($path) || '' === $path) {
-            throw new \InvalidArgumentException('Invalid path provided for move operation; must be a non-empty string');
-        }
-    }
-
-    /**
      * Throws an exception if the file has already being moved
      * 
      * @return void 

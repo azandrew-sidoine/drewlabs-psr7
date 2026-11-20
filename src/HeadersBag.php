@@ -10,14 +10,10 @@ use Traversable;
 
 class HeadersBag implements ArrayAccess, IteratorAggregate
 {
-    /**
-     * 
-     * @var array<string,string[]>
-     */
+    /** @var array<string,string[]> */
     private $headers = [];
 
     /**
-     * 
      * @param array $headers 
      * @return void 
      */
@@ -34,8 +30,8 @@ class HeadersBag implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * 
      * @param string|array|self $headers 
+     * 
      * @return static 
      */
     public static function new($headers = [])
@@ -93,7 +89,7 @@ class HeadersBag implements ArrayAccess, IteratorAggregate
     /**
      * Add a header entry.
      * 
-     * @param string $key 
+     * @param string $header 
      * @param mixed $value 
      * @return static 
      */
@@ -121,9 +117,9 @@ class HeadersBag implements ArrayAccess, IteratorAggregate
     }
 
     /**
-     * Checks if a given header exists
+     * checks if a given header exists
      * 
-     * @param string $name 
+     * @param string $header 
      * @return bool 
      */
     public function has(string $header)
@@ -175,16 +171,17 @@ class HeadersBag implements ArrayAccess, IteratorAggregate
         $this->remove($offset);
     }
 
-    private static function parseHeaders($list)
+    /** @param string $haystack */
+    private static function parseHeaders($haystack)
     {
-        $list = preg_split('/\r\n/', (string) $list, -1, PREG_SPLIT_NO_EMPTY);
+        $haystack = preg_split('/\r\n/', (string) $haystack, -1, PREG_SPLIT_NO_EMPTY);
         $httpHeaders = new HeadersBag([]);
-        $httpHeaders->set('Request-Line', reset($list) ?? '');
-        for ($i = 1; $i < count($list); $i++) {
-            if (strpos($list[$i], ':') !== false) {
+        $httpHeaders->set('Request-Line', reset($haystack) ?? '');
+        for ($i = 1; $i < count($haystack); $i++) {
+            if (strpos($haystack[$i], ':') !== false) {
                 list($key, $value) = array_map(function ($item) {
                     return $item ? trim($item) : null;
-                }, explode(':', $list[$i], 2));
+                }, explode(':', $haystack[$i], 2));
                 $httpHeaders->set($key, $value);
             }
         }

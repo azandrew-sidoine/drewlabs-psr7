@@ -24,6 +24,7 @@ trait ResponseTrait
         return $this->reasonPhrase ?? '';
     }
 
+    /** @param int $code */
     #[\ReturnTypeWillChange]
     public function withStatus($code, $reason = ''): ResponseInterface
     {

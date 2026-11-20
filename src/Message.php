@@ -35,6 +35,7 @@ trait Message
         return $this->protocol;
     }
 
+    /** @param string $version */
     #[\ReturnTypeWillChange]
     public function withProtocolVersion($version): MessageInterface
     {
@@ -52,12 +53,14 @@ trait Message
         return $this->headers->toArray();
     }
 
+    /** @param string $header */
     #[\ReturnTypeWillChange]
     public function hasHeader($header): bool
     {
         return $this->headers->offsetExists($header);
     }
 
+    /** @param string $header */
     #[\ReturnTypeWillChange]
     public function getHeader($header): array
     {
@@ -65,6 +68,7 @@ trait Message
     }
 
 
+    /** @param string $header */
     #[\ReturnTypeWillChange]
     public function getHeaderLine($header): string
     {
@@ -72,12 +76,13 @@ trait Message
     }
 
 
+    /** 
+     * @param string $header
+     * @param string $value
+     */
     #[\ReturnTypeWillChange]
     public function withHeader($header, $value): MessageInterface
     {
-        /**
-         * @var self
-         */
         $object = (clone $this);
         $object->headers->offsetUnset($header);
         $object->headers->set($header, $value);
@@ -85,6 +90,10 @@ trait Message
         return $object;
     }
 
+    /** 
+     * @param string $header
+     * @param string $value
+     */
     #[\ReturnTypeWillChange]
     public function withAddedHeader($header, $value): MessageInterface
     {
@@ -96,6 +105,7 @@ trait Message
         return $object;
     }
 
+    /** @param string $header */
     #[\ReturnTypeWillChange]
     public function withoutHeader($header): MessageInterface
     {
@@ -131,7 +141,6 @@ trait Message
 
     public function __clone()
     {
-        // We clone the http headers when we clone the curren object
         $this->headers = clone $this->headers;
     }
 }

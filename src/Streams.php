@@ -25,7 +25,7 @@ class Streams
      * Creates a Psr7 stream instance that lazily creates the internal stream
      * at runtime when requested by user
      * 
-     * @param callable|CreatesStream|null|string $createStream
+     * @param callable|null|string $createStream
      * 
      * @return  LazyStream&StreamInterface
      */

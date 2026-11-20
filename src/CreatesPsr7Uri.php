@@ -7,6 +7,9 @@ namespace Drewlabs\Psr7;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 
+/**
+ * @mixin UriInterface
+ */
 trait CreatesPsr7Uri
 {
 
@@ -43,7 +46,7 @@ trait CreatesPsr7Uri
      */
     public static function createFromServerGlobal(array $server): UriInterface
     {
-        $self = new self();
+        $self = new static();
 
         if (isset($server['HTTP_X_FORWARDED_PROTO'])) {
             $self = $self->withScheme($server['HTTP_X_FORWARDED_PROTO']);

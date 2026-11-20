@@ -4,28 +4,16 @@ namespace Drewlabs\Psr7;
 
 trait FilesAttributesAware
 {
-    /**
-     * 
-     * @var string
-     */
+    /** @var string */
     private $name;
 
-    /**
-     * 
-     * @var int
-     */
+    /** @var int */
     private $size;
 
-    /**
-     * 
-     * @var null|string
-     */
+    /** @var string|null */
     private $mediaType;
 
-    /**
-     * 
-     * @var int
-     */
+    /** @var int */
     private $error;
 
     public function getSize(): int

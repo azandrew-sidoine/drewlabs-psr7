@@ -20,13 +20,8 @@ class Response implements ResponseInterface
      * @param string $version 
      * @param string|null $reason 
      */
-    public function __construct(
-        int $status = 200,
-        $headers = [],
-        $body = null,
-        string $version = '1.1',
-        string $reason = null
-    ) {
+    public function __construct(int $status = 200, $headers = [], $body = null, string $version = '1.1', ?string $reason = null)
+    {
         $this->assertStatusCodeRange($status);
         $this->statusCode = $status;
         $this->stream = $body instanceof StreamInterface ? $body : Stream::new((string)($body ?? ''));

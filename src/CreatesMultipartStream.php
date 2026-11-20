@@ -19,7 +19,7 @@ class CreatesMultipartStream implements CreatesStream
     /** @var string */
     private $boundary;
 
-    public function __construct(array $attributes, string $boundary = null)
+    public function __construct(array $attributes, ?string $boundary = null)
     {
         $this->boundary = $boundary ?? bin2hex(random_bytes(20));
         $this->attributes = $attributes ?? [];
@@ -222,12 +222,8 @@ class CreatesMultipartStream implements CreatesStream
      * @param HeadersBag $headers 
      * @return Closure 
      */
-    private function createPart(
-        $name,
-        StreamInterface $stream,
-        string $filename = null,
-        HeadersBag $headers
-    ) {
+    private function createPart($name, StreamInterface $stream, ?string $filename = null, HeadersBag $headers)
+    {
         return function (\Closure $callback) use ($name, $stream, $filename, $headers) {
             $disposition = $headers->get('Content-Disposition');
             if (empty($disposition)) {
@@ -265,11 +261,8 @@ class CreatesMultipartStream implements CreatesStream
      * @return void 
      * @throws InvalidArgumentException 
      */
-    private function pushPart(
-        StackedStream $stream,
-        StreamInterface $body,
-        array $headers = []
-    ) {
+    private function pushPart(StackedStream $stream, StreamInterface $body, array $headers = [])
+    {
         $stream->push(Stream::new($this->getHeaders($headers)));
         $stream->push($body);
         $stream->push(Stream::new("\r\n"));
@@ -287,6 +280,7 @@ class CreatesMultipartStream implements CreatesStream
         if (!is_array($content)) {
             return false;
         }
+        
         $contains_scalar = null;
         foreach ($content as $value) {
             $is_array = is_array($value);
@@ -313,6 +307,7 @@ class CreatesMultipartStream implements CreatesStream
         if (!is_array($attributes)) {
             throw new \UnexpectedValueException('Expect each item of the multipart data to be an associative array');
         }
+
         foreach (['contents', 'name'] as $key) {
             if (!array_key_exists($key, (array)$attributes)) {
                 throw new \InvalidArgumentException("'{$key}' is required in multipart attribute");

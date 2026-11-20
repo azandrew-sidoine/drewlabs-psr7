@@ -301,6 +301,7 @@ final class Uri implements UriInterface
         return !isset(self::SCHEMES[$scheme]) || $port !== self::SCHEMES[$scheme];
     }
 
+    /** @param int|string $port */
     private function filterPort($port)
     {
         if (null === $port) {
@@ -314,6 +315,7 @@ final class Uri implements UriInterface
         return self::isNonStandardPort($this->scheme, $port) ? $port : null;
     }
 
+    /** @param string $path */
     private function filterPath($path)
     {
         if (!\is_string($path)) {
@@ -322,6 +324,7 @@ final class Uri implements UriInterface
         return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/', [__CLASS__, 'rawurlencodeMatchZero'], $path);
     }
 
+    /** @param string $str */
     private function filterQueryAndFragment($str)
     {
         if (!\is_string($str)) {
